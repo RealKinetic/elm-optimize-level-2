@@ -1,5 +1,5 @@
 {
-  "name": "elm-optimize-level-2",
+  "name": "@witful/elm-optimize-level-2",
   "description": "A second level of optimization for the Javascript that the Elm Compiler produces.",
   "version": "0.2.3",
   "license": "BSD-3-Clause",
