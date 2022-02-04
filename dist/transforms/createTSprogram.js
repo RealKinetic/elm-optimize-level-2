@@ -16,7 +16,7 @@ function serveLibFile(name, languageVersion) {
     return val;
 }
 const printer = typescript_1.default.createPrinter();
-exports.createProgramFromSource = (source) => {
+const createProgramFromSource = (source) => {
     const sourceCopy = typescript_1.default.createSourceFile(source.fileName, printer.printFile(source), typescript_1.default.ScriptTarget.ES2018);
     const customCompilerHost = {
         getSourceFile: (name, languageVersion) => {
@@ -46,4 +46,5 @@ exports.createProgramFromSource = (source) => {
     }, customCompilerHost);
     return [program, sourceCopy];
 };
+exports.createProgramFromSource = createProgramFromSource;
 //# sourceMappingURL=createTSprogram.js.map

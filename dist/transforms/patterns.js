@@ -7,7 +7,7 @@ exports.matchElmSource = exports.matchWrapping = exports.matchWrappedInvocation 
 const typescript_1 = __importDefault(require("typescript"));
 const invocationRegex = /A(?<arity>[1-9]+[0-9]*)/;
 const wrapperRegex = /F(?<arity>[1-9]+[0-9]*)/;
-exports.matchWrappedInvocation = node => {
+const matchWrappedInvocation = node => {
     if (typescript_1.default.isCallExpression(node)) {
         const expression = node.expression;
         // detects f(..)
@@ -35,7 +35,8 @@ exports.matchWrappedInvocation = node => {
     }
     return undefined;
 };
-exports.matchWrapping = node => {
+exports.matchWrappedInvocation = matchWrappedInvocation;
+const matchWrapping = node => {
     if (typescript_1.default.isCallExpression(node) && typescript_1.default.isIdentifier(node.expression)) {
         const maybeMatch = node.expression.text.match(wrapperRegex);
         if (maybeMatch && maybeMatch.groups) {
@@ -47,6 +48,7 @@ exports.matchWrapping = node => {
     }
     return undefined;
 };
+exports.matchWrapping = matchWrapping;
 // SourceFile;
 //  ExpressionStatement;
 //    ParenthesizedExpression;
@@ -56,7 +58,7 @@ exports.matchWrapping = node => {
 //            Identifier;
 //          Block; <==== that what we are looking
 //    ThisKeyword;
-exports.matchElmSource = (source) => {
+const matchElmSource = (source) => {
     const expStatement = source.statements[0];
     console.log(expStatement);
     if (typescript_1.default.isExpressionStatement(expStatement) &&
@@ -67,4 +69,5 @@ exports.matchElmSource = (source) => {
     }
     return undefined;
 };
+exports.matchElmSource = matchElmSource;
 //# sourceMappingURL=patterns.js.map

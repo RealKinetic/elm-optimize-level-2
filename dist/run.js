@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -75,7 +75,7 @@ async function run(options, helpInformation, log) {
     }
     else if (inputFilePath && inputFilePath.endsWith('.elm')) {
         elmFilePath = inputFilePath;
-        jsSource = node_elm_compiler_1.compileToStringSync([inputFilePath], {
+        jsSource = (0, node_elm_compiler_1.compileToStringSync)([inputFilePath], {
             output: 'output/elm.opt.js',
             cwd: dirname,
             optimize: true,
@@ -98,7 +98,7 @@ async function run(options, helpInformation, log) {
     if (jsSource == '') {
         throw new Error('Target JS file is empty.');
     }
-    const transformed = await Transform.transform(dirname, jsSource, elmFilePath, options.verbose, types_1.toolDefaults(o3Enabled, replacements));
+    const transformed = await Transform.transform(dirname, jsSource, elmFilePath, options.verbose, (0, types_1.toolDefaults)(o3Enabled, replacements));
     // Make sure all the folders up to the output file exist, if not create them.
     // This mirrors elm make behavior.
     const outputDirectory = path.dirname(options.outputFilePath);

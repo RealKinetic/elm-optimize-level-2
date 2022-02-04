@@ -23,7 +23,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -35,10 +35,10 @@ const prepack_1 = require("prepack");
 const Terser = __importStar(require("terser"));
 const Compress = __importStar(require("@gfx/zopfli"));
 function prepack(input) {
-    const { code } = prepack_1.prepackFileSync([input], {
+    const { code } = (0, prepack_1.prepackFileSync)([input], {
         debugNames: true,
         inlineExpressions: true,
-        maxStackDepth: 1200,
+        maxStackDepth: 1200, // that didn't help
     });
     return code;
 }

@@ -24,7 +24,7 @@ function reportInlinining(split, { inlined }) {
         }
     }
 }
-exports.createInlineContext = () => ({
+const createInlineContext = () => ({
     functionsThatWrapFunctions: new Map(),
     splits: new Map(),
     partialApplications: new Map(),
@@ -35,13 +35,14 @@ exports.createInlineContext = () => ({
         partialApplications: 0,
     },
 });
+exports.createInlineContext = createInlineContext;
 function reportInlineTransformResult(ctx) {
     const { inlined } = ctx;
     console.log(`inlining ${inlined.fromRawFunc} function calls`);
 }
-exports.createFunctionInlineTransformer = (logOverview, arityBasedFunctionNames, ignoreTopLevel) => (context) => {
+const createFunctionInlineTransformer = (logOverview, arityBasedFunctionNames, ignoreTopLevel) => (context) => {
     return (sourceFile) => {
-        const inlineContext = exports.createInlineContext();
+        const inlineContext = (0, exports.createInlineContext)();
         // todo hack to only inline top level functions
         // const { topScope } = matchElmSource(sourceFile)!;
         const splitter = createSplitterVisitor(inlineContext, context, ignoreTopLevel === 'for tests', arityBasedFunctionNames);
@@ -54,6 +55,7 @@ exports.createFunctionInlineTransformer = (logOverview, arityBasedFunctionNames,
         return result;
     };
 };
+exports.createFunctionInlineTransformer = createFunctionInlineTransformer;
 const isTopLevelScope = (path) => {
     const funcExpCount = path.reduce((c, n) => (typescript_1.default.isFunctionExpression(n) ? c + 1 : c), 0);
     const funcDeclCount = path.reduce((c, n) => (typescript_1.default.isFunctionDeclaration(n) ? c + 1 : c), 0);

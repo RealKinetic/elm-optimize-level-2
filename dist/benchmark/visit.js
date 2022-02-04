@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -37,18 +37,19 @@ const ParseLog = __importStar(require("./parseLog"));
 function isBrowser(browser) {
     return browser != types_1.Browser.Node && browser != types_1.Browser.V8JitLog;
 }
-exports.benchmark = async (options, name, tag, html, js, jitLogPath) => {
+const benchmark = async (options, name, tag, html, js, jitLogPath) => {
     switch (options.browser) {
         case types_1.Browser.Node:
             return visitNode(options, name, tag, js);
         case types_1.Browser.V8JitLog:
-            return exports.generateNodeJitLog(options, name, tag, js, jitLogPath);
+            return (0, exports.generateNodeJitLog)(options, name, tag, js, jitLogPath);
         default:
             return visitBrowser(options, name, tag, html);
     }
 };
+exports.benchmark = benchmark;
 const exec = Util.promisify(Process.exec);
-exports.generateNodeJitLog = async (options, name, tag, js, jitLogPath) => {
+const generateNodeJitLog = async (options, name, tag, js, jitLogPath) => {
     console.log("Capturing Jit Log".padEnd(20, ' ') +
         chalk_1.default.green(' -> ') +
         chalk_1.default.yellow("node"));
@@ -58,6 +59,7 @@ exports.generateNodeJitLog = async (options, name, tag, js, jitLogPath) => {
         return { name: name, tag: tag, browser: options.browser, results: [], v8: null };
     });
 };
+exports.generateNodeJitLog = generateNodeJitLog;
 const visitNode = async (options, name, tag, js) => {
     const label = tag == null ? name : name + ', ' + tag;
     console.log(label.padEnd(20, ' ') +

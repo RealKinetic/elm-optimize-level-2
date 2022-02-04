@@ -24,14 +24,14 @@ const newVDomNS4 = `_VirtualDom_nodeNS = F4(function (namespace, tag, factList, 
       };
 
 })`;
-exports.replaceVDomNode = () => context => {
+const replaceVDomNode = () => context => {
     return sourceFile => {
         const visitor = (node) => {
             // replace the two virtualdom node functions with our own implementation
             if (typescript_1.default.isVariableDeclaration(node)) {
                 if (typescript_1.default.isIdentifier(node.name) &&
                     node.name.text == '_VirtualDom_nodeNS') {
-                    return create_1.create('_VirtualDom_nodeNS', create_1.ast(newVDomNS4));
+                    return (0, create_1.create)('_VirtualDom_nodeNS', (0, create_1.ast)(newVDomNS4));
                 }
             }
             // replace calls
@@ -63,6 +63,7 @@ exports.replaceVDomNode = () => context => {
         return typescript_1.default.visitNode(sourceFile, visitor);
     };
 };
+exports.replaceVDomNode = replaceVDomNode;
 // replace calls to $elm$virtual_dom$VirtualDom$node with calls to _VirtualDom_nodeNS
 function replaceVDomWithNSInline(node) {
     if (typescript_1.default.isCallExpression(node) &&

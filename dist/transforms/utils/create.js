@@ -5,14 +5,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.create = exports.astNodes = exports.ast = void 0;
 const typescript_1 = __importDefault(require("typescript"));
-exports.ast = (sourceText) => {
+const ast = (sourceText) => {
     const source = typescript_1.default.createSourceFile('bla', sourceText, typescript_1.default.ScriptTarget.ES2018);
     return source.statements[0];
 };
-exports.astNodes = (sourceText) => {
+exports.ast = ast;
+const astNodes = (sourceText) => {
     const source = typescript_1.default.createSourceFile('bla', sourceText, typescript_1.default.ScriptTarget.ES2018);
     return Array.from(source.statements);
 };
+exports.astNodes = astNodes;
 function create(name, body) {
     if (typescript_1.default.isExpressionStatement(body) &&
         typescript_1.default.isBinaryExpression(body.expression)) {

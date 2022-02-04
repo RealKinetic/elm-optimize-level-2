@@ -11,7 +11,7 @@ exports.inlineNumberToString = void 0;
 const typescript_1 = __importDefault(require("typescript"));
 const FLOAT_2_STRING = '$elm$core$String$fromFloat';
 const INT_2_STRING = '$elm$core$String$fromInt';
-exports.inlineNumberToString = () => context => {
+const inlineNumberToString = () => context => {
     return sourceFile => {
         const visitor = (node) => {
             if (typescript_1.default.isCallExpression(node)) {
@@ -28,4 +28,5 @@ exports.inlineNumberToString = () => context => {
         return typescript_1.default.visitNode(sourceFile, visitor);
     };
 };
+exports.inlineNumberToString = inlineNumberToString;
 //# sourceMappingURL=inlineNumberToString.js.map

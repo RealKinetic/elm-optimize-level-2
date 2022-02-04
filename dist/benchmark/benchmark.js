@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -28,7 +28,7 @@ const Transform = __importStar(require("../transform"));
 const node_elm_compiler_1 = require("node-elm-compiler");
 const Post = __importStar(require("../postprocess"));
 // Asset Sizes
-exports.assetSizeStats = (dir) => {
+const assetSizeStats = (dir) => {
     const stats = [];
     const files = fs.readdirSync(dir);
     for (let i in files) {
@@ -41,6 +41,7 @@ exports.assetSizeStats = (dir) => {
     }
     return stats;
 };
+exports.assetSizeStats = assetSizeStats;
 function reformat(results) {
     let project = 'Unknown';
     let reformed = {};
@@ -148,14 +149,19 @@ function roundToDecimal(level, num) {
     return Math.round(num * factor) / factor;
 }
 // Run a list of testcases
-exports.run = async function (options, runnable) {
+const run = async function (options, runnable) {
     let results = [];
     let assets = {};
     for (let instance of runnable) {
-        const source = node_elm_compiler_1.compileToStringSync([instance.elmFile], {
+        const source = (0, node_elm_compiler_1.compileToStringSync)([instance.elmFile], {
             output: 'output/elm.opt.js',
             cwd: instance.dir,
             optimize: true,
+            //       processOpts:
+            //         // ignore stdout
+            //         {
+            //           stdio: ['pipe', 'pipe', 'pipe'],
+            //         },
         });
         const transformed = await Transform.transform(instance.dir, source, path.join(instance.dir, instance.elmFile), options.verbose, options.transforms);
         removeFilesFromDir(path.join(instance.dir, 'output'));
@@ -169,7 +175,7 @@ exports.run = async function (options, runnable) {
             gzip: options.gzip
         });
         if (options.assetSizes) {
-            assets[instance.name] = exports.assetSizeStats(path.join(instance.dir, 'output'));
+            assets[instance.name] = (0, exports.assetSizeStats)(path.join(instance.dir, 'output'));
         }
         for (let browser of options.runBenchmark) {
             results.push(await prepare_boilerplate(browser, instance.name, null, instance.dir, source));
@@ -178,6 +184,7 @@ exports.run = async function (options, runnable) {
     }
     return { assets: assets, benchmarks: reformat(results) };
 };
+exports.run = run;
 const breakdown = function (options) {
     let transforms = [];
     let full = [
@@ -255,11 +262,11 @@ const breakdown = function (options) {
 // Run a list of test cases
 // But we'll run each transformation individually to see what the breakdown is.
 // We'll also run a final case with all the requested transformations
-exports.runWithBreakdown = async function (options, runnable) {
+const runWithBreakdown = async function (options, runnable) {
     let results = [];
     let assets = {};
     for (let instance of runnable) {
-        const source = node_elm_compiler_1.compileToStringSync([instance.elmFile], {
+        const source = (0, node_elm_compiler_1.compileToStringSync)([instance.elmFile], {
             output: 'output/elm.opt.js',
             cwd: instance.dir,
             optimize: true,
@@ -295,20 +302,21 @@ exports.runWithBreakdown = async function (options, runnable) {
             }
         }
         if (options.assetSizes) {
-            assets[instance.name] = exports.assetSizeStats(path.join(instance.dir, 'output'));
+            assets[instance.name] = (0, exports.assetSizeStats)(path.join(instance.dir, 'output'));
         }
     }
     return { assets: assets, benchmarks: reformat(results) };
 };
+exports.runWithBreakdown = runWithBreakdown;
 const unallowedChars = /[^A-Za-z0-9]/g;
 // Run a list of test cases
 // But we'll knock out each transformation individually to see if that has an effect
 // We'll also run a final case with all the requested transformations
-exports.runWithKnockout = async function (options, runnable) {
+const runWithKnockout = async function (options, runnable) {
     let results = [];
     let assets = {};
     for (let instance of runnable) {
-        const source = node_elm_compiler_1.compileToStringSync([instance.elmFile], {
+        const source = (0, node_elm_compiler_1.compileToStringSync)([instance.elmFile], {
             output: 'output/elm.opt.js',
             cwd: instance.dir,
             optimize: true,
@@ -342,10 +350,11 @@ exports.runWithKnockout = async function (options, runnable) {
                 results.push(await prepare_boilerplate(browser, instance.name, steps[i].name, instance.dir, intermediate));
             }
         }
-        assets[instance.name] = exports.assetSizeStats(path.join(instance.dir, 'output'));
+        assets[instance.name] = (0, exports.assetSizeStats)(path.join(instance.dir, 'output'));
     }
     return { assets: assets, benchmarks: reformat(results) };
 };
+exports.runWithKnockout = runWithKnockout;
 const knockout = function (options) {
     let transforms = [];
     let full = [

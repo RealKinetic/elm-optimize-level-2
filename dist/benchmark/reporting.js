@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.markdownTable = exports.markdown = exports.terminal = void 0;
 const chalk_1 = __importDefault(require("chalk"));
 // Render results as markdown
-exports.terminal = (report) => {
+const terminal = (report) => {
     let buffer = [];
     // List asset sizes
     for (let key in report.assets) {
@@ -110,6 +110,7 @@ exports.terminal = (report) => {
     }
     return buffer.join('\n');
 };
+exports.terminal = terminal;
 function v8MemoryDescription(representation) {
     let descriptors = [];
     for (const key in representation) {
@@ -120,7 +121,7 @@ function v8MemoryDescription(representation) {
     return descriptors;
 }
 // Render results as markdown
-exports.markdown = (report) => {
+const markdown = (report) => {
     let buffer = [];
     buffer.push('# Benchmark results');
     buffer.push('');
@@ -187,7 +188,8 @@ exports.markdown = (report) => {
     buffer.push('');
     return buffer.join('\n');
 };
-exports.markdownTable = (report) => {
+exports.markdown = markdown;
+const markdownTable = (report) => {
     let buffer = [];
     buffer.push('# Benchmark results');
     buffer.push('');
@@ -272,6 +274,7 @@ exports.markdownTable = (report) => {
     buffer.push('');
     return buffer.join('\n');
 };
+exports.markdownTable = markdownTable;
 // adds commas to the number so its easier to read.
 function humanizeNumber(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');

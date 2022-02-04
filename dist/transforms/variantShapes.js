@@ -80,13 +80,13 @@ const extractNumberOfSlots = (exp) => {
         return 0;
     }
     // means that we are dealing with an arity > 1
-    const match = patterns_1.matchWrapping(exp);
+    const match = (0, patterns_1.matchWrapping)(exp);
     if (match) {
         return match.arity;
     }
     throw new Error('unexpected expression');
 };
-exports.createCustomTypesTransformer = (replacements, mode) => (context) => {
+const createCustomTypesTransformer = (replacements, mode) => (context) => {
     return (sourceFile) => {
         const visitor = (node) => {
             if (typescript_1.default.isVariableDeclaration(node) &&
@@ -107,4 +107,5 @@ exports.createCustomTypesTransformer = (replacements, mode) => (context) => {
         return typescript_1.default.visitNode(sourceFile, visitor);
     };
 };
+exports.createCustomTypesTransformer = createCustomTypesTransformer;
 //# sourceMappingURL=variantShapes.js.map

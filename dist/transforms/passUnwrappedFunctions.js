@@ -9,14 +9,14 @@ const typescript_1 = __importDefault(require("typescript"));
 const patterns_1 = require("./patterns");
 const createTSprogram_1 = require("./createTSprogram");
 const deriveNewFuncName = (funcName) => funcName + '_unwrapped';
-exports.createPassUnwrappedFunctionsTransformer = (getCtx) => (context) => {
+const createPassUnwrappedFunctionsTransformer = (getCtx) => (context) => {
     getCtx;
     return (sourceFile) => {
         const foundFunctions = new Map();
-        const [program, copiedSource] = createTSprogram_1.createProgramFromSource(sourceFile);
+        const [program, copiedSource] = (0, createTSprogram_1.createProgramFromSource)(sourceFile);
         const typeChecker = program.getTypeChecker();
         const collectFunctions = (node) => {
-            const invocation = patterns_1.matchWrappedInvocation(node);
+            const invocation = (0, patterns_1.matchWrappedInvocation)(node);
             if (invocation) {
                 const { arity, callExpression, calleeName: funcName } = invocation;
                 const symbol = typeChecker.getSymbolAtLocation(funcName);
@@ -65,7 +65,7 @@ exports.createPassUnwrappedFunctionsTransformer = (getCtx) => (context) => {
                     const modifyFunction = (nodeInModfifyFunc) => {
                         if (typescript_1.default.isCallExpression(nodeInModfifyFunc) &&
                             typescript_1.default.isIdentifier(nodeInModfifyFunc.expression)) {
-                            const match = patterns_1.matchWrappedInvocation(nodeInModfifyFunc);
+                            const match = (0, patterns_1.matchWrappedInvocation)(nodeInModfifyFunc);
                             if (match &&
                                 match.calleeName.text === funcToModify.parameterName &&
                                 match.arity === funcToModify.arity) {
@@ -138,7 +138,7 @@ exports.createPassUnwrappedFunctionsTransformer = (getCtx) => (context) => {
                         const argPos = funcToUnwrap.parameterPos;
                         const funcParameter = args[argPos];
                         if (funcParameter) {
-                            const match = patterns_1.matchWrapping(funcParameter);
+                            const match = (0, patterns_1.matchWrapping)(funcParameter);
                             // it means that it is something like (..., F3(function (a,b,c) {...}), ...)
                             if (match) {
                                 return typescript_1.default.createCall(typescript_1.default.createIdentifier(deriveNewFuncName(expression.text)), undefined, [
@@ -179,4 +179,5 @@ exports.createPassUnwrappedFunctionsTransformer = (getCtx) => (context) => {
         return withInlinedCalls;
     };
 };
+exports.createPassUnwrappedFunctionsTransformer = createPassUnwrappedFunctionsTransformer;
 //# sourceMappingURL=passUnwrappedFunctions.js.map

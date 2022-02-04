@@ -55,16 +55,16 @@ const types_1 = require("../types");
 const listElementMarker = (mode) => mode === types_1.Mode.Dev
     ? typescript_1.default.createStringLiteral('::')
     : typescript_1.default.createNumericLiteral('1');
-exports.InlineMode = ts_union_1.Union({
-    UsingConsFunc: ts_union_1.of(null),
-    UsingLiteralObjects: ts_union_1.of(),
+exports.InlineMode = (0, ts_union_1.Union)({
+    UsingConsFunc: (0, ts_union_1.of)(null),
+    UsingLiteralObjects: (0, ts_union_1.of)(),
 });
 const LIST_FROM_ARRAY_F_NAME = '_List_fromArray';
 const LIST_NIL_NAME = '_List_Nil';
 const LIST_CONS_F_NAME = '_List_cons';
 const listNil = typescript_1.default.createIdentifier(LIST_NIL_NAME);
 const listConsCall = typescript_1.default.createIdentifier(LIST_CONS_F_NAME);
-exports.createInlineListFromArrayTransformer = (inlineMode) => context => {
+const createInlineListFromArrayTransformer = (inlineMode) => context => {
     return sourceFile => {
         const visitor = (node) => {
             // detects [exp](..)
@@ -98,4 +98,5 @@ exports.createInlineListFromArrayTransformer = (inlineMode) => context => {
         return typescript_1.default.visitNode(sourceFile, visitor);
     };
 };
+exports.createInlineListFromArrayTransformer = createInlineListFromArrayTransformer;
 //# sourceMappingURL=inlineListFromArray.js.map

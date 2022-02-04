@@ -28,7 +28,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.inlineEquality = void 0;
 const typescript_1 = __importDefault(require("typescript"));
 const EQUALITY_FN = '_Utils_eq';
-exports.inlineEquality = () => context => {
+const inlineEquality = () => context => {
     return sourceFile => {
         const visitor = (node) => {
             if (typescript_1.default.isCallExpression(node)) {
@@ -54,6 +54,7 @@ exports.inlineEquality = () => context => {
         return typescript_1.default.visitNode(sourceFile, visitor);
     };
 };
+exports.inlineEquality = inlineEquality;
 // NOTE: we're cheating here with the source.
 // I've manually verified that these are number or string comparisons
 // So they can safely be converted to ===

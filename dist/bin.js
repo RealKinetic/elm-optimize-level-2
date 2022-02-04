@@ -28,7 +28,7 @@ Give me an Elm file, I'll compile it behind the scenes using Elm 0.19.1, and the
     // .option('--replacements <dir>', 'Replace stuff')
     .parse(process.argv);
 const { output, optimizeSpeed, verbose } = commander_1.default.opts();
-run_1.run({
+(0, run_1.run)({
     inputFilePath: commander_1.default.args[0],
     outputFilePath: output,
     optimizeSpeed,

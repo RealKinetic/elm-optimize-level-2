@@ -139,25 +139,25 @@ const reportAnalysis = function (fns) {
     return { fns: results, memory: window.memory  };
 }`;
 };
-exports.v8Debug = context => {
+const v8Debug = context => {
     return sourceFile => {
         const visitor = (node) => {
             if (typescript_1.default.isVariableDeclaration(node)) {
                 if (typescript_1.default.isIdentifier(node.name) &&
                     node.name.text == DEBUG_MEMORY_FN) {
-                    return create_1.create(DEBUG_MEMORY_FN, create_1.ast(new_memory));
+                    return (0, create_1.create)(DEBUG_MEMORY_FN, (0, create_1.ast)(new_memory));
                 }
                 else if (typescript_1.default.isIdentifier(node.name) &&
                     node.name.text == DEBUG_OPT_STATUS_FN) {
-                    return create_1.create(DEBUG_OPT_STATUS_FN, create_1.ast(new_opt_status));
+                    return (0, create_1.create)(DEBUG_OPT_STATUS_FN, (0, create_1.ast)(new_opt_status));
                 }
                 else if (typescript_1.default.isIdentifier(node.name) &&
                     node.name.text == ENABLE_MEMORY_COLLECTION) {
-                    return create_1.create(ENABLE_MEMORY_COLLECTION, create_1.ast(new_memory_collection_enabled));
+                    return (0, create_1.create)(ENABLE_MEMORY_COLLECTION, (0, create_1.ast)(new_memory_collection_enabled));
                 }
                 else if (typescript_1.default.isIdentifier(node.name) &&
                     node.name.text == DISABLE_MEMORY_COLLECTION) {
-                    return create_1.create(DISABLE_MEMORY_COLLECTION, create_1.ast(new_memory_collection_disabled));
+                    return (0, create_1.create)(DISABLE_MEMORY_COLLECTION, (0, create_1.ast)(new_memory_collection_disabled));
                 }
             }
             return typescript_1.default.visitEachChild(node, visitor, context);
@@ -165,17 +165,18 @@ exports.v8Debug = context => {
         return typescript_1.default.visitNode(sourceFile, visitor);
     };
 };
-exports.reportFunctionStatusInBenchmarks = context => {
+exports.v8Debug = v8Debug;
+const reportFunctionStatusInBenchmarks = context => {
     return sourceFile => {
-        const callgraph = callgraph_1.createCallGraph(sourceFile);
+        const callgraph = (0, callgraph_1.createCallGraph)(sourceFile);
         const suite = "$author$project$Suite$suite";
         const main_runner = "$author$project$V8$Benchmark$main";
-        let called = callgraph_1.getCalled(callgraph, suite, undefined);
+        let called = (0, callgraph_1.getCalled)(callgraph, suite, undefined);
         const visitor = (node) => {
             if (typescript_1.default.isVariableDeclaration(node)) {
                 if (typescript_1.default.isIdentifier(node.name) &&
                     node.name.text == DEBUG_REPORT_FN) {
-                    return create_1.create(DEBUG_REPORT_FN, create_1.ast(reportAnalysis(called)));
+                    return (0, create_1.create)(DEBUG_REPORT_FN, (0, create_1.ast)(reportAnalysis(called)));
                 }
             }
             return typescript_1.default.visitEachChild(node, visitor, context);
@@ -183,4 +184,5 @@ exports.reportFunctionStatusInBenchmarks = context => {
         return typescript_1.default.visitNode(sourceFile, visitor);
     };
 };
+exports.reportFunctionStatusInBenchmarks = reportFunctionStatusInBenchmarks;
 //# sourceMappingURL=analyze.js.map

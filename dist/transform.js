@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -39,8 +39,18 @@ const inlineNumberToString_1 = require("./transforms/inlineNumberToString");
 const analyze_1 = require("./transforms/analyze");
 const recordUpdate_1 = require("./transforms/recordUpdate");
 const Replace = __importStar(require("./transforms/replace"));
-exports.transform = async (_dir, jsSource, elmfile, verbose, transforms) => {
-    let source = typescript_1.default.createSourceFile('elm.js', jsSource, typescript_1.default.ScriptTarget.ES2018);
+const transform = async (_dir, jsSource, elmfile, verbose, transforms) => {
+    /* First, remove comments from source.
+  
+    We've encountered a bug when running some of the transforms (specifically the
+    record-update transform when the -O3 flag is enabled) where comments from the
+    source file appear interspersed throughout the transformed file. In some cases
+    this will result in runtime exceptions.
+   */
+    const sourceWithComments = typescript_1.default.createSourceFile('n/a', jsSource, typescript_1.default.ScriptTarget.ES2018);
+    const noCommentsPrinter = typescript_1.default.createPrinter({ removeComments: true });
+    const jsSourceWithoutComments = noCommentsPrinter.printFile(sourceWithComments);
+    let source = typescript_1.default.createSourceFile('elm.js', jsSourceWithoutComments, typescript_1.default.ScriptTarget.ES2018);
     let parsedVariants = primitives_1.primitives;
     if (elmfile && transforms.variantShapes) {
         // const elmSource = fs.readFileSync(elmfile, 'utf8');
@@ -62,16 +72,16 @@ exports.transform = async (_dir, jsSource, elmfile, verbose, transforms) => {
             return variant.totalTypeSlotCount != 0;
         });
     }
-    const normalizeVariantShapes = variantShapes_1.createCustomTypesTransformer(parsedVariants, types_1.Mode.Prod);
+    const normalizeVariantShapes = (0, variantShapes_1.createCustomTypesTransformer)(parsedVariants, types_1.Mode.Prod);
     if (verbose) {
         console.log('Reshaping ' + parsedVariants.length + ' variants');
     }
     // We have to ensure that this transformation takes place before everything else
     if (transforms.replaceVDomNode) {
-        const results = typescript_1.default.transform(source, [adjustVirtualDom_1.replaceVDomNode()]);
+        const results = typescript_1.default.transform(source, [(0, adjustVirtualDom_1.replaceVDomNode)()]);
         source = results.transformed[0];
     }
-    let replacementTransformer = inlineEquality_1.inlineEquality();
+    let replacementTransformer = (0, inlineEquality_1.inlineEquality)();
     if (transforms.replacements != null) {
         replacementTransformer = Replace.replace(transforms.replacements);
     }
@@ -83,35 +93,36 @@ exports.transform = async (_dir, jsSource, elmfile, verbose, transforms) => {
         [transforms.replaceStringFunctions, Replace.from_file('/../replacements/string')],
         [transforms.v8Analysis, analyze_1.v8Debug],
         [transforms.variantShapes, normalizeVariantShapes],
-        [transforms.inlineFunctions, inlineWrappedFunctions_1.createFunctionInlineTransformer(verbose, transforms.fastCurriedFns)],
-        [transforms.inlineEquality, inlineEquality_1.inlineEquality()],
-        [transforms.inlineNumberToString, inlineNumberToString_1.inlineNumberToString()],
+        [transforms.inlineFunctions, (0, inlineWrappedFunctions_1.createFunctionInlineTransformer)(verbose, transforms.fastCurriedFns)],
+        [transforms.inlineEquality, (0, inlineEquality_1.inlineEquality)()],
+        [transforms.inlineNumberToString, (0, inlineNumberToString_1.inlineNumberToString)()],
         [
             transforms.listLiterals == types_1.InlineLists.AsObjects,
-            inlineListFromArray_1.createInlineListFromArrayTransformer(inlineListFromArray_1.InlineMode.UsingLiteralObjects(types_1.Mode.Prod)),
+            (0, inlineListFromArray_1.createInlineListFromArrayTransformer)(inlineListFromArray_1.InlineMode.UsingLiteralObjects(types_1.Mode.Prod)),
         ],
         [
             transforms.listLiterals == types_1.InlineLists.AsCons,
-            inlineListFromArray_1.createInlineListFromArrayTransformer(inlineListFromArray_1.InlineMode.UsingConsFunc),
+            (0, inlineListFromArray_1.createInlineListFromArrayTransformer)(inlineListFromArray_1.InlineMode.UsingConsFunc),
         ],
         [
             transforms.passUnwrappedFunctions,
-            passUnwrappedFunctions_1.createPassUnwrappedFunctionsTransformer(() => inlineCtx),
+            (0, passUnwrappedFunctions_1.createPassUnwrappedFunctionsTransformer)(() => inlineCtx),
         ],
         [
             !!transforms.objectUpdate,
-            transforms.objectUpdate && modernizeJS_1.objectUpdate(transforms.objectUpdate),
+            transforms.objectUpdate && (0, modernizeJS_1.objectUpdate)(transforms.objectUpdate),
         ],
         [transforms.arrowFns, modernizeJS_1.convertFunctionExpressionsToArrowFuncs],
         [transforms.shorthandObjectLiterals, modernizeJS_1.convertToObjectShorthandLiterals],
-        [transforms.unusedValues, removeUnusedLocals_1.createRemoveUnusedLocalsTransform()],
-        [transforms.recordUpdates, recordUpdate_1.recordUpdate()],
+        [transforms.unusedValues, (0, removeUnusedLocals_1.createRemoveUnusedLocalsTransform)()],
+        [transforms.recordUpdates, (0, recordUpdate_1.recordUpdate)()],
         [transforms.v8Analysis, analyze_1.reportFunctionStatusInBenchmarks],
     ]);
     const { transformed: [result], } = typescript_1.default.transform(source, transformations);
     const printer = typescript_1.default.createPrinter();
     return printer.printFile(result);
 };
+exports.transform = transform;
 function removeDisabled(list) {
     let newList = [];
     list.forEach(([cond, val]) => {

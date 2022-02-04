@@ -16,7 +16,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -32,7 +32,7 @@ const path = __importStar(require("path"));
 // Parse the elm file using tree sitter
 const elmParser = new tree_sitter_1.default();
 elmParser.setLanguage(tree_sitter_elm_1.default);
-exports.parseElm = ({ author, project, source, }) => {
+const parseElm = ({ author, project, source, }) => {
     const tree = elmParser.parse(source);
     const found = [];
     /*
@@ -145,7 +145,8 @@ exports.parseElm = ({ author, project, source, }) => {
     }
     return found;
 };
-exports.parseDir = (dir) => {
+exports.parseElm = parseElm;
+const parseDir = (dir) => {
     let variants = [];
     const files = fs.readdirSync(dir);
     files.forEach(function (author) {
@@ -161,13 +162,14 @@ exports.parseDir = (dir) => {
     });
     return variants;
 };
+exports.parseDir = parseDir;
 const parseElmFilesInDirectory = (dir, author, project) => {
     let variants = [];
     let files = walkSync(dir, []);
     for (let i in files) {
         if (files[i].endsWith('.elm')) {
             const source = fs.readFileSync(files[i], 'utf8');
-            let results = exports.parseElm({
+            let results = (0, exports.parseElm)({
                 author: author,
                 project: project,
                 source: source,

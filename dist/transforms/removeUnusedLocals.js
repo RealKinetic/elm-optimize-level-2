@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createRemoveUnusedLocalsTransform = void 0;
 const typescript_1 = __importDefault(require("typescript"));
-exports.createRemoveUnusedLocalsTransform = () => context => {
+const createRemoveUnusedLocalsTransform = () => context => {
     return sourceFile => {
         const printer = typescript_1.default.createPrinter();
         const sourceCopy = typescript_1.default.createSourceFile('elm.js', printer.printFile(sourceFile), typescript_1.default.ScriptTarget.ES2018);
@@ -49,6 +49,7 @@ exports.createRemoveUnusedLocalsTransform = () => context => {
         return result;
     };
 };
+exports.createRemoveUnusedLocalsTransform = createRemoveUnusedLocalsTransform;
 const defaultCompilerHost = typescript_1.default.createCompilerHost({});
 const cache = new Map();
 function serveLibFile(name, languageVersion) {

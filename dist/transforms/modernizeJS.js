@@ -25,7 +25,7 @@ const assign = `
 const _Utils_update = (oldRecord, updatedFields) => (Object.assign({}, oldRecord, updatedFields));
 }
 `;
-exports.objectUpdate = (kind) => {
+const objectUpdate = (kind) => {
     switch (kind) {
         case types_1.ObjectUpdate.UseSpreadForUpdateAndOriginalRecord:
             return createReplaceUtilsUpdateWithObjectSpread(kind);
@@ -39,6 +39,7 @@ exports.objectUpdate = (kind) => {
             return inlineObjectSpread();
     }
 };
+exports.objectUpdate = objectUpdate;
 const createReplaceUtilsUpdateWithObjectSpread = (kind) => (context) => {
     return (sourceFile) => {
         const visitor = (node) => {
@@ -48,11 +49,11 @@ const createReplaceUtilsUpdateWithObjectSpread = (kind) => (context) => {
                 ((_a = node.name) === null || _a === void 0 ? void 0 : _a.text) === '_Utils_update') {
                 switch (kind) {
                     case types_1.ObjectUpdate.UseSpreadForUpdateAndOriginalRecord:
-                        return create_1.ast(spreadForBoth);
+                        return (0, create_1.ast)(spreadForBoth);
                     case types_1.ObjectUpdate.UseSpreadOnlyToMakeACopy:
-                        return create_1.ast(copyWithSpread);
+                        return (0, create_1.ast)(copyWithSpread);
                     case types_1.ObjectUpdate.UseAssign:
-                        return create_1.ast(assign);
+                        return (0, create_1.ast)(assign);
                 }
             }
             return typescript_1.default.visitEachChild(node, visitor, context);
@@ -97,7 +98,7 @@ const inlineObjectSpread = () => (context) => {
         return typescript_1.default.visitNode(sourceFile, visitor);
     };
 };
-exports.convertFunctionExpressionsToArrowFuncs = (context) => {
+const convertFunctionExpressionsToArrowFuncs = (context) => {
     return (sourceFile) => {
         const visitor = (node) => {
             //   console.log(
@@ -137,7 +138,8 @@ exports.convertFunctionExpressionsToArrowFuncs = (context) => {
         return typescript_1.default.visitNode(sourceFile, visitor);
     };
 };
-exports.convertToObjectShorthandLiterals = (context) => {
+exports.convertFunctionExpressionsToArrowFuncs = convertFunctionExpressionsToArrowFuncs;
+const convertToObjectShorthandLiterals = (context) => {
     return (sourceFile) => {
         let shortenedCount = 0;
         const visitor = (node) => {
@@ -182,4 +184,5 @@ exports.convertToObjectShorthandLiterals = (context) => {
         return res;
     };
 };
+exports.convertToObjectShorthandLiterals = convertToObjectShorthandLiterals;
 //# sourceMappingURL=modernizeJS.js.map

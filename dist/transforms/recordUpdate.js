@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.recordUpdate = void 0;
 const typescript_1 = __importDefault(require("typescript"));
 const create_1 = require("./utils/create");
-exports.recordUpdate = () => (context) => (sourceFile) => {
+const recordUpdate = () => (context) => (sourceFile) => {
     const registry = new RecordRegistry();
     const propSet = new Set();
     const updateSet = new Map();
@@ -19,6 +19,7 @@ exports.recordUpdate = () => (context) => (sourceFile) => {
     const insertedCtors = typescript_1.default.visitNode(replacedLiterals, prependNodes(statementsToPrepend, context));
     return insertedCtors;
 };
+exports.recordUpdate = recordUpdate;
 class RecordRegistry {
     constructor() {
         this.counter = 0;
@@ -156,7 +157,7 @@ function isRecordLiteral(node) {
 function createRecordStatements(registry) {
     const statementString = Array.from(registry.map.entries()).
         map((it) => createRecordStatement(it[1].valueOf(), it[0].split(','))).join('\n');
-    return create_1.astNodes(statementString);
+    return (0, create_1.astNodes)(statementString);
 }
 function createRecordStatement(className, props) {
     const propList = props.join(',');
@@ -181,7 +182,7 @@ function createReusableUpdateStatements(updateSet) {
         filter((it) => it[1] > 1).
         map((it) => createReusableUpdateStatement(it[0])).
         join('\n');
-    return create_1.astNodes(statementString);
+    return (0, create_1.astNodes)(statementString);
 }
 function createReusableUpdateStatement(shape) {
     const updateFnName = `$$update__${shape.replace(/,/g, '__')}`;

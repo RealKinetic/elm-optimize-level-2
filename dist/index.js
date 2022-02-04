@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -31,9 +31,15 @@ async function run(options) {
     }, '', () => { });
 }
 exports.run = run;
-async function transform(jsSource, elmFilePath, o3Enabled = true, transforms = null, verbose = false) {
-    const dirName = process.cwd();
-    return Transform.transform(dirName, jsSource, elmFilePath, verbose, transforms || types_1.toolDefaults(o3Enabled, null));
+/**
+ * Transform JS source (compiled output of `elm make`)
+ * Handy for making build tool plugins (e.g, parcel, snowpack, webpack, etc.)
+ */
+async function transform(jsSource, o3Enabled = false) {
+    if (jsSource == '') {
+        throw new Error('elm-optimize-level-2: JS source is empty.');
+    }
+    return Transform.transform("unused dirName param", jsSource, undefined, false, (0, types_1.toolDefaults)(o3Enabled, null));
 }
 exports.transform = transform;
 //# sourceMappingURL=index.js.map
