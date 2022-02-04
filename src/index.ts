@@ -21,20 +21,25 @@ export async function run(options: {
   );
 }
 
+/**
+ * Transform JS source (compiled output of `elm make`)
+ * Handy for making build tool plugins (e.g, parcel, snowpack, webpack, etc.)
+ */
 export async function transform(
   jsSource: string,
-  elmFilePath: string | undefined,
-  o3Enabled = true,
-  transforms : Transforms | null = null,
-  verbose = false,
+  o3Enabled = false,
 ): Promise<string> {
-  const dirName = process.cwd();
+
+  if (jsSource == '') {
+    throw new Error('elm-optimize-level-2: JS source is empty.');
+  }
+
   return Transform.transform(
-    dirName,
+    "unused dirName param",
     jsSource,
-    elmFilePath,
-    verbose,
-    transforms || toolDefaults(o3Enabled, null)
+    undefined,
+    false,
+    toolDefaults(o3Enabled, null)
   )
 }
 
